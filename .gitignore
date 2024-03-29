@@ -1,0 +1,7 @@
+output
+.vscode
+.venv
+__pycache__
+input
+debug.py
+.DS_store

@@ -2,7 +2,7 @@ import scipy
 import os
 import pandas as pd
 import numpy as np
-from utils import (
+from module.utils import (
     flatten,
     isCached,
     getCache,
@@ -14,7 +14,7 @@ from utils import (
     maskDf,
     replaceall,
 )
-from constants import CACHE_DIR, INPUT_DIR
+from module.constants import CACHE_DIR, INPUT_DIR
 
 
 def getOrBuildDf(filename, df_identifier, builder_cb):
@@ -41,9 +41,8 @@ def buildRawDf(filename):
         data = pd.read_excel(filepath, header=0)
     if file_type == "csv":
         data = pd.read_csv(filepath, header=0)
-        # to set all 0 to Nan
     data.columns = [replaceall(col, {"-": "_", " ": "_"}) for col in data.columns]
-    return data.replace(0, np.nan)
+    return data
 
 
 def applyTreatmentMapping(df, filename):
@@ -75,9 +74,40 @@ def applyTreatmentMapping(df, filename):
     return df.explode("experiments").rename(columns={"experiments": "experiment"})
 
 
+
+def getHeadTwitchDf(filename):
+    return getOrBuildDf(filename, "headtwitch_df", buildHeadTwitchDf)
+
+def getTreatmentMapping(filename):
+    return getMetadata(filename, "treatment_mapping")
+
+def getExperimentalInfo(filename):
+    return getMetadata(filename, "experimental_info")
+
+def getMetadata(filename, metadata_type):
+    return getJSON(f"{CACHE_DIR}/{filename.split('.')[0]}/{metadata_type}.json")
+
+def getQuantitativeStats(filename):
+    return getOrBuildDf(filename, "quantitative_stats", buildQuantitativeStatsDf)
+
+######## BUILDERS 
+
+
 def buildHeadTwitchDf(HT_filename):
     new_format_df = applyTreatmentMapping(getRawDf(HT_filename), HT_filename)
     return new_format_df
 
-def getHeadTwitchDf(filename):
-    return getOrBuildDf(filename, "headtwitch_df", buildHeadTwitchDf)
+def buildQuantitativeStatsDf(filename):
+    return pd.DataFrame(
+        columns=[
+            "data_type",
+            "experiment",
+            "region",
+            "compound",
+            "test",
+            "p_value_threshold",
+            "is_significant",
+            "p_value",
+            "result",
+        ]
+    )

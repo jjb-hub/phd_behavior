@@ -6,7 +6,7 @@ import pickle
 import shutil
 import sys
 import warnings
-from constants import *
+from module.constants import *
 from PIL import Image
 import re
 import numpy as np

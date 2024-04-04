@@ -1,8 +1,8 @@
 # from matplotlib import pyplot as plt
 # import pandas as pd
 # # from module.quantitative import processQuantitativeStats
-# from getters import getHeadTwitchDf, getExperimentalInfo, updateQuantitativeStats
-# from histogram import buildHeadTwitchHistogramData, buildHistogram
+# from getters import getRawDf, getExperimentalInfo, updateQuantitativeStats
+# from histogram import buildsingleHistogramData, buildHistogram
 # from module.utils import figure_cache
 # from module.stats import processQuantitativeStats
 # import seaborn as sns
@@ -14,7 +14,7 @@
 
 
 # @figure_cache("head_twitch_histogram")
-# def headTwitchHistogram(
+# def singleHistogram(
 #     HT_filename,
 #     experiment=None,
 #     vairable=None,
@@ -22,8 +22,8 @@
 #     p_value_threshold=None,
 #     from_scratch=None,
 # ):
-#     HT_data = getHeadTwitchDf(HT_filename)
-#     data, order, palette = buildHeadTwitchHistogramData(
+#     HT_data = getRawDf(HT_filename)
+#     data, order, palette = buildsingleHistogramData(
 #         HT_filename, experiment, vairable
 #     )
 

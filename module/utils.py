@@ -221,6 +221,7 @@ IDENTIFIERS = {
     "pca": 'f"pca_{experiment}_for_{compounds}_in_{regions}"',
     "network": 'f"network_{experiment}_{correlogram_type}_{buildCorrelogramFilenmae(to_correlate, columns)}"',
     "networkDegreeDistribution": 'f"networkDegreeDistribution_{experiment}_{correlogram_type}_{buildCorrelogramFilenmae(to_correlate, columns)}"',
+    "behavior_histogram": 'f"behavior_histogram_{experiment}_for_{behavior}"'
 }
 
 

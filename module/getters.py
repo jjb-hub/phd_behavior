@@ -75,7 +75,7 @@ def applyTreatmentMapping(df, filename):
 
 
 
-def getHeadTwitchDf(filename):
+def getRawDf(filename):
     return getOrBuildDf(filename, "headtwitch_df", buildHeadTwitchDf)
 
 def getTreatmentMapping(filename):

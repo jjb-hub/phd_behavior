@@ -5,7 +5,7 @@ import pandas as pd
 # from outliers import smirnov_grubbs as grubbs #not used and having circular import shit 
 import matplotlib.pyplot as plt
 from module.utils import select_params, maskDf, cache
-from module.getters import getQuantitativeStats
+from module.getters import getQuantitativeStats, getExperimentalInfo
 
 
 def processQuantitativeStats(experiment_info, data, p_value_threshold):
@@ -89,6 +89,24 @@ def updateQuantitativeStats(filename, rows):
     cache(filename, "quantitative_stats", quantitative_stats_df)
     print("QUANTITATIVE STATS UPDATED")
 
+
+def getPostHocTest(filename, experiment):
+    '''
+    Returns the post hoc test used for experiment.
+    '''
+    #will need to be modified when pLSD is added
+# TODO / REMI pretty sure this should be its own function at some point statsTests(filename, experiment) also in processQuantitativeStats
+    experiment_info = getExperimentalInfo(filename)[experiment]
+    multiple_factors = len(experiment_info["independant_vars"]) > 1
+    multiple_treatments = len(experiment_info["groups"]) > 1
+    paired = experiment_info["paired"]
+    parametric = experiment_info["parametric"]
+
+    tests = doQuantitativeStatLogic(
+        multiple_factors, multiple_treatments, paired, parametric
+    )
+    test = tests[-1]  # feed lowest test only post-hoc
+    return test
 
 ######## STATS FROM HPLC ######## 3/4/24
 

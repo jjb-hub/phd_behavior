@@ -1,6 +1,6 @@
 from module.utils import initiateFileSystem, subselectDf
-from module.getters import getHeadTwitchDf
-from module.histogram import headTwitchHistogram
+from module.getters import getRawDf
+from module.histogram import singleHistogram, behaviorHistogram
 
 
 

@@ -1,5 +1,5 @@
 from module.utils import initiateFileSystem, subselectDf
-from module.getters import getRawDf
+from module.getters import getRawDf, getStats
 from module.histogram import singleHistogram, behaviorHistogram
 
 

@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 import numpy as np 
 import seaborn as sns
-from module.getters import getRawDf, getExperimentalInfo, subselectDf, getQuantitativeStats
-from module.stats import processQuantitativeStats, updateQuantitativeStats, getPostHocTest
+from module.getters import getRawDf, getExperimentalInfo, subselectDf, getStats
+from module.stats import processStats, updateStats, getPostHocTest
 from module.utils import figure_cache
 from statannotations.Annotator import Annotator
 
@@ -35,18 +35,17 @@ def singleHistogram(
 
     # REMI add stats calcultaion to input to histogram builder and outlier same as for quantativeHistograms()
     # the last quantitative test is coded to return the labels directly, thus the need for the bool
-    (is_significant, significance_infos, test_results) = processQuantitativeStats(
+    (is_significant, significance_infos, test_results) = processStats(
         getExperimentalInfo(filename)[experiment], data, p_value_threshold
     )
 
-    updateQuantitativeStats(
+    updateStats(
         filename,
         [
             {
-                "data_type": "HT",
+                "behavior": "HT",
                 "experiment": experiment,
-                "compound": None,
-                "region": None,
+                "time": None,
                 **test_result,
             }
             for test_result in test_results
@@ -82,6 +81,9 @@ def behaviorHistogram( filename,
 
     raw_df = getRawDf(filename)
     plotting_df, timepoints = filterColumnsExperimentBehavior(raw_df, experiment, behavior)
+    if plotting_df.empty:
+        print (f"Behavior {behavior} is not in data. ")
+        return 
 
     order = plotting_df.sort_values(by="group_id", ascending=True).treatment.unique()
     palette = {
@@ -95,18 +97,17 @@ def behaviorHistogram( filename,
     for time in timepoints: # time replaces region as it is the x-tixk rename to general after #TODO
         plotting_df_temp = plotting_df.rename(columns={behavior:'value'}).copy()
         plotting_df_temp = plotting_df_temp[plotting_df_temp['time']==time]
-        (is_significant, significance_infos, test_results) = processQuantitativeStats(
+        (is_significant, significance_infos, test_results) = processStats(
             getExperimentalInfo(filename)[experiment], plotting_df_temp, p_value_threshold
         )
 
-        updateQuantitativeStats(
+        updateStats(
             filename,
             [
                 {
-                    "data_type": behavior,
+                    "behavior": behavior,
                     "experiment": experiment,
-                    "compound": None,
-                    "region": time,
+                    "time": time,
                     **test_result,
                 }
                 for test_result in test_results
@@ -115,10 +116,10 @@ def behaviorHistogram( filename,
 
     test = getPostHocTest(filename, experiment)
     quant_stats_df = subselectDf(
-        getQuantitativeStats(filename),
+        getStats(filename),
         {
             "experiment": experiment,
-            "data_type": behavior,
+            "behavior": behavior,
             "test": test,
         },
         )
@@ -263,18 +264,18 @@ def buildHueHistogram(
             group_index = i % len(order)
             hue_index = i // len(order)
             # Get the region and hue names based on their indices
-            region = order[group_index]
+            x_tick = order[group_index]
             hue = hue_order[hue_index]
             
             if hue == comparison_hue:
                 continue # do not plot stats on control/vehicle
 
-            if region not in significance_infos['region'].unique():
+            if x_tick not in significance_infos[x].unique(): #HARDCODE
                 continue #continue if no stats for that region
 
             # Check if this hue is in a significant pair for this region
-            significant_posthoc_pairs = significance_infos[significance_infos['region'] == region]['p_value'].values[0][0]  #  [ [(hue, hue), (hue,hue)] ,   [p_val, p_val] ]
-            significant_posthoc_p_values = significance_infos[significance_infos['region'] == region]['p_value'].values[0][1]
+            significant_posthoc_pairs = significance_infos[significance_infos[x] == x_tick]['p_value'].values[0][0]  #  [ [(hue, hue), (hue,hue)] ,   [p_val, p_val] ]
+            significant_posthoc_p_values = significance_infos[significance_infos[x] == x_tick]['p_value'].values[0][1]
             for pair, p_value in zip(significant_posthoc_pairs, significant_posthoc_p_values):
                 if comparison_hue in pair and hue in pair:
                     ax.text(bar.get_x() + bar.get_width() / 2,  0.1, '*', ha='center', va='bottom', fontsize=16)

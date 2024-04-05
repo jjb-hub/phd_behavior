@@ -5,10 +5,10 @@ import pandas as pd
 # from outliers import smirnov_grubbs as grubbs #not used and having circular import shit 
 import matplotlib.pyplot as plt
 from module.utils import select_params, maskDf, cache
-from module.getters import getQuantitativeStats, getExperimentalInfo
+from module.getters import getStats, getExperimentalInfo
 
 
-def processQuantitativeStats(experiment_info, data, p_value_threshold):
+def processStats(experiment_info, data, p_value_threshold):
     """_summary_
 
     Args:
@@ -60,8 +60,8 @@ def doQuantitativeStatLogic(multiple_factors, multiple_treatments, paired, param
 
 
 
-def updateQuantitativeStats(filename, rows):
-    quantitative_stats_df = getQuantitativeStats(filename)
+def updateStats(filename, rows):
+    quantitative_stats_df = getStats(filename)
     for row in rows:
         data_row = pd.DataFrame([row])
         unique_row = maskDf(
@@ -71,10 +71,9 @@ def updateQuantitativeStats(filename, rows):
                 for key, value in row.items()
                 if key
                 in [
-                    "data_type",
+                    "behavior",
                     "experiment",
-                    "region",
-                    "compound",
+                    "time",
                     "test",
                     "p_value_threshold",
                 ]
@@ -95,7 +94,7 @@ def getPostHocTest(filename, experiment):
     Returns the post hoc test used for experiment.
     '''
     #will need to be modified when pLSD is added
-# TODO / REMI pretty sure this should be its own function at some point statsTests(filename, experiment) also in processQuantitativeStats
+# TODO / REMI pretty sure this should be its own function at some point statsTests(filename, experiment) also in processStats
     experiment_info = getExperimentalInfo(filename)[experiment]
     multiple_factors = len(experiment_info["independant_vars"]) > 1
     multiple_treatments = len(experiment_info["groups"]) > 1

@@ -1,10 +1,10 @@
 # from matplotlib import pyplot as plt
 # import pandas as pd
-# # from module.quantitative import processQuantitativeStats
-# from getters import getRawDf, getExperimentalInfo, updateQuantitativeStats
+# # from module.quantitative import processStats
+# from getters import getRawDf, getExperimentalInfo, updateStats
 # from histogram import buildsingleHistogramData, buildHistogram
 # from module.utils import figure_cache
-# from module.stats import processQuantitativeStats
+# from module.stats import processStats
 # import seaborn as sns
 
 
@@ -32,17 +32,17 @@
 
 #     # REMI add stats calcultaion to input to histogram builder and outlier same as for quantativeHistograms()
 #     # the last quantitative test is coded to return the labels directly, thus the need for the bool
-#     (is_significant, significance_infos, test_results) = processQuantitativeStats(
+#     (is_significant, significance_infos, test_results) = processStats(
 #         getExperimentalInfo(HT_filename)[experiment], data, p_value_threshold
 #     )
 
-#     updateQuantitativeStats(
+#     updateStats(
 #         HT_filename,
 #         [
 #             {
-#                 "data_type": "HT",
+#                 "behavior": "HT",
 #                 "experiment": experiment,
-#                 "compound": None,
+#                 : None,
 #                 "region": None,
 #                 **test_result,
 #             }

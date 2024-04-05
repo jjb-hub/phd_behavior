@@ -29,8 +29,8 @@ def getExperimentalInfo(filename):
 def getMetadata(filename, metadata_type):
     return getJSON(f"{CACHE_DIR}/{filename.split('.')[0]}/{metadata_type}.json")
 
-def getQuantitativeStats(filename):
-    return getOrBuildDf(filename, "quantitative_stats", buildQuantitativeStatsDf)
+def getStats(filename):
+    return getOrBuildDf(filename, "quantitative_stats", buildStatsDf)
 
 ######## checkers
 def getOrBuildDf(filename, df_identifier, builder_cb):
@@ -82,13 +82,12 @@ def buildRawDf(filename):
     return data
 
 
-def buildQuantitativeStatsDf(filename):
+def buildStatsDf(filename):
     return pd.DataFrame(
         columns=[
-            "data_type",
+            "behavior",
             "experiment",
-            "region",
-            "compound",
+            "time",
             "test",
             "p_value_threshold",
             "is_significant",
